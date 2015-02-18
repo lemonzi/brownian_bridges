@@ -1,0 +1,57 @@
+html { height:100%; }
+body { margin: 0; position:absolute; top:0; bottom:0; right:0; left:0; }
+
+#map {
+  margin: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#dropfile {
+  font-family: Helvetica Neue,Helvetica,Arial,sans-serif; 
+  width: 100%;
+  height: 100%;
+  font-size: 16px;
+  margin: 0;
+ /*
+  margin-bottom: 30px;
+  border-style: solid;
+  border-width: medium;
+  border-color: rgb(100,100,200);
+  border-radius: 10px;
+*/
+}
+
+#filelist {
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  top: 20px;
+  left: 50px;
+  padding: 5px;
+  font-size: 16px;
+  line-height: 1;
+  border: 1;
+  border-radius: 10px;
+  height: 34px;
+}
+
+/* FILEDROP STUFF */
+
+/* Essential FileDrop zone element configuration: */
+.fd-zone {
+  position: relative;
+  overflow: hidden;
+  margin: 0 auto;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Provides visible feedback when user drags a file over the drop zone: */
+.fd-zone.over { border-color: maroon; background: #eee; }
+

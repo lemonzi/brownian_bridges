@@ -1,0 +1,6 @@
+*.m~
+*.mat
+samples/
+*.toc
+*.aux
+*.log
