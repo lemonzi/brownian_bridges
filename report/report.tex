@@ -1,7 +1,20 @@
-\documentclass{article}
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
 \usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{enumerate}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{hyperref}
+\usepackage{textcomp}
+\usepackage{caption}
+\usepackage{subcaption}
 \usepackage{microtype}
 \usepackage{parskip}
+\usepackage{float}
+\usepackage{url}
 
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
@@ -52,12 +65,12 @@ Regular Brownian Motion has a well-known solution of a Gaussian distribution cen
 
 %% give the formula here
 
-\begin{verbatim}
-    - generic bridge: any phi, any starting pdf
-    - brownian bridge: guassian starting pdf, brownian motion with given sigma_m
-    - what can we get from it? occupation time, plain pdf, etc
-    - mu and sigma interpolation, based on brownian motion
-\end{verbatim}
+% \begin{verbatim}
+%     - generic bridge: any phi, any starting pdf
+%     - brownian bridge: guassian starting pdf, brownian motion with given sigma_m
+%     - what can we get from it? occupation time, plain pdf, etc
+%     - mu and sigma interpolation, based on brownian motion
+% \end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Brownian Bridge Movement Model}
@@ -79,18 +92,20 @@ Finding the optimal parameter $\hat{\sigma}_m^2$ reduces to:
 
 As we will show later, this can be computed through gradient descent-based minimization of the negative log-likelihood of the model ($-\log L$).
 
-\begin{verbatim}
-    - extension to N known, time-stamped points
-    - based on selecting the active BB as closest in time
-\end{verbatim}
+% \begin{verbatim}
+%     - extension to N known, time-stamped points
+%     - based on selecting the active BB as closest in time
+% \end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Other applications of Brownian Bridges}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{verbatim}
-    - finance
-\end{verbatim}
+Apart from Movement Ecology (BBMM), Brownian Bridges are best known for their application in Computational Finance. Instead of computing pdf's, as we have done here, they are used for generating simulated, realistic paths between two points efficiently. This allows methods similar to Monte Carlo simulation.
+
+% \begin{verbatim}
+%     - finance
+% \end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -125,11 +140,11 @@ We can minimize it through the steepest descent method: given an initial $\sigma
     \text{with } \alpha &= \frac{t_i - t_i^1}{t_i^2 - t_i^1}
 \end{align*}
 
-\begin{verbatim}
-    - recall negative log likelihood formulation
-    - formulation of the derivative
-    - gradient descent
-\end{verbatim}
+% \begin{verbatim}
+%     - recall negative log likelihood formulation
+%     - formulation of the derivative
+%     - gradient descent
+% \end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Scaling to very large trajectories}
@@ -141,10 +156,10 @@ Therefore, it is desirable to optimize the search of the active bridge. Given a 
 
 When fitting $\sigma_m^2$, however, we need to iterate over half of the points (the fitting set) every time we want to compute the negative log-likelihood or its derivative; and not only that, but for every point we need to find its bridge. In this case going through the fitting points is unavoidable, but since we defined them as points with a bridge begin before them and a bridge end after them we don't need to perform the search if we know their index.
 
-\begin{verbatim}
-    - Identify bridge selection as the bottleneck for large datasets
-    - Propose highly optimized methods or binary search as the solution
-\end{verbatim}
+% \begin{verbatim}
+%     - Identify bridge selection as the bottleneck for large datasets
+%     - Propose highly optimized methods or binary search as the solution
+% \end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -154,34 +169,82 @@ When fitting $\sigma_m^2$, however, we need to iterate over half of the points (
 
 Using the aforementioned algorithms, we applied the Brownian Bridges Movement Model to synthetic data to assess that the implementation was correct, and then to real-world data collected from the Internet: some samples from location logs from the author, gathered using the Google Location API, and samples from animals taken from the Movebank Database.
 
+All occupation time results from the presented simulations can be browsed on an online, interactive map at \url{http://lemonzi.github.io/brownian_bridges/web}. This visualization tool has been created especially for this project, and allows drag-and-drop of CSV files exported from the MATLAB script as well as a number of predefined results. The CSV files should have a list of records in the following format:
+
+\begin{verbatim}
+<latitude>,<longitude>,<value>
+\end{verbatim}
+
+With the coordinates given in decimal degrees and the value between 0 and 1.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Synthetic data}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+In order to check that the model words, we fed it some synthetic data. Figure~\ref{fig:synthetic} shows the expected occupation time for each time differential, found by numerically integrating the BBMM over time. It indeed takes into account the travelling, and shows a linear path between points. The figure is just a screenshot from the web-based visualizer, where the data can be fully browsed by selecting the Synthetic Data option. Figure~\ref{fig:synth_origin} shows the just the original coordinates fed to the system, wihtout BBMM interpolation. Timestamps were all equally spaced; the measurement error variance was assumed to be 0.001 (circular normal distribution).
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{plots/synthetic_base.png}
+    \caption{Original synthetic data.}
+    \label{fig:synth_origin}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{plots/synthetic_sample.png}
+    \caption{Expected occupancy time using synthetic data.}
+    \label{fig:synthetic}
+\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Google Location API}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{verbatim}
-    - google offers timestamped gps records for your user, internally used in google maps etc
-    - data avilable through Google Takeout
-    - data is formatted in JSON, with lots of metadata
-    - timestamps are in Unix epoch ms, gps in E7 format
-    - present results in the web visualizer
-\end{verbatim}
+Many people use Android phones for navigation using the GPS, and Google Maps for finding out about places. What most of them are unaware of is that Google Inc. keeps a log of all places a person has visited while the GPS is active - what they call the Location History. Users can browse where they've been on a map. This used to be available through Google Latitude API, but it was closed down some time ago; it's still possible, though, to get the data through Google Takeout.
+
+In this experiment, the author downloaded his own Location History in order to build a BBMM of himself. The data Google offers coms in the JSON format, with lots of additional information such as whether or not the person was actively moving during certain periods of time. The given Javascript code \texttt{parse\_location.js} can convert such JSON file into a TSV (tab-separated values) file, containing just a list of GPS coordinates in the E7 format together with absolute timestamps in milliseconds.
+
+The results are again on the web visualizer, selecting the Google Latitude Data source. A snapshot is provided here for convenience.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{plots/google_sample.png}
+    \caption{Expected occupancy time using data from Google Location History.}
+    \label{fig:google_sample}
+\end{figure}
+
+% \begin{verbatim}
+%     - google offers timestamped gps records for your user, internally used in google maps etc
+%     - data avilable through Google Takeout
+%     - data is formatted in JSON, with lots of metadata
+%     - timestamps are in Unix epoch ms, gps in E7 format
+%     - present results in the web visualizer
+% \end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Movebank Database}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{verbatim}
-    - movebank offers timestapmed gps records for animals, normally released as part of scientific papers
-    - data is formated in CSV, from which we need to extract 3 relevant fields
-    - timestamps are in date format
-    - present results in the web visualizer
-\end{verbatim}
+Movebank is a website specialized in collecting GPS tracks from animals and making them available for research; these tracks usually come from scientific papers that present results on them. Since they have a common CSV format easily parsable, we made a script for importing it into the BBMM and estimating the expected occupation time for each space differential.
+
+The data Movebank offers contains, among other fields, the latitude and longitude (in decimal degrees) of the animal plus a timestamp in a text format, like: \texttt{2008-12-01 06:00:00.000}. Fortunately, MATLAB parses them natively.
+
+It should be easy to modify the given \texttt{bbmm\_movebank.m} script to read another track; the CSV file saved at the bottom of the script can be dragged onto the web-based visualizer for exploration.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{plots/movebank_sample.png}
+    \caption{Expected occupancy time using data from Movebank.}
+    \label{fig:movebank_sample}
+\end{figure}
+
+% \begin{verbatim}
+%     - movebank offers timestapmed gps records for animals, normally released as part of scientific papers
+%     - data is formated in CSV, from which we need to extract 3 relevant fields
+%     - timestamps are in date format
+%     - present results in the web visualizer
+% \end{verbatim}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -189,10 +252,16 @@ Using the aforementioned algorithms, we applied the Brownian Bridges Movement Mo
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{verbatim}
-    - remark the code is available on github, and it's possible to try it with different datasets
-    - brownian bridges are useful when there are few known points; they are good at interpolating, not at summarizing
-    - likewise, they perform poorly when extrapolating outside the defined time interval (they behave as regular brownian motion)
-\end{verbatim}
+In this report, we described and presented an implementation of the Brownian Bridges Movement Model suitable for large datasets. All the code is available on GitHub \footnote{\url{https://github.com/lemonzi/brownian_bridges}}, including the MATLAB scripts, a pre-processing script in Javascript for the Google Latitude data, and the web-based visualization tool. The visualization tool is also live at \footnote{\url{https://lemonzi.github.io/brownian_bridges/web}}.
+
+In general, BBMM is very useful when there are few known points; that is, it does a good job at interpolating. However, when there are lots of points close in time it does not really offer an edge compared to just assuming a normal distribution centered at the closest point.
+
+The model has for sure room for improvement; a first thing one can think of is to stop assuming indenpendent brownian motion between pairs of points, and account for the fact that the animal has some momentum; for instance, by taking points in groups of 3 and performing a polynomial fitting of the mean instead of using a naïve linear interpolation.
+
+% \begin{verbatim}
+%     - remark the code is available on github, and it's possible to try it with different datasets
+%     - brownian bridges are useful when there are few known points; they are good at interpolating, not at summarizing
+%     - likewise, they perform poorly when extrapolating outside the defined time interval (they behave as regular brownian motion)
+% \end{verbatim}
 
 \end{document}
