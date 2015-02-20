@@ -13,6 +13,7 @@
         <select id="filelist">
             <option value="data/demo2.csv">Movebank Data</option>
             <option value="data/demo1.csv">Google Latitude Data</option>
+            <option value="data/demo0.csv">Synthetic Data</option>
         </select>
     </div>
 
@@ -41,7 +42,7 @@
           heatMap = L.heatLayer(csv.data.filter(function(d){return d.length === 3;}), {
             radius: 10,
             blur: 10,
-            maxZoom: 1
+            maxZoom: 10
           }).addTo(map);
         });
 
@@ -54,8 +55,8 @@
               csv.data.filter(function(d){return d.length === 3;}), 
               {
                 radius: 10,
-                blur: 5,
-                maxZoom: 1
+                blur: 10,
+                maxZoom: 10
             }).addTo(map);
           });
         });
@@ -72,7 +73,7 @@
                 {
                   radius: 10,
                   blur: 10,
-                  maxZoom: 1
+                  maxZoom: 10
               }).addTo(map);
             }
           });

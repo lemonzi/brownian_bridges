@@ -10,7 +10,7 @@ function pdf = brownianb(d, step, tol, max_it)
         step = 0.2;    % Learning step for sigma_m s.d.
     end
     if (nargin < 1)
-        % This is a recorded trajectory example
+        % This is a synthetic trajectory example
         d.x = [1,2; 3,4; 5,5; 7,8; 8,7; 7,6; 6,5]; % coordinates
         d.t = [0,   1,   2,   3,   4,   5,   6  ]; % observation times
         d.s = 0.1;        % observation error (can be global or per-sample)
@@ -66,9 +66,9 @@ function pdf = brownianb(d, step, tol, max_it)
     % which is the sum of log(p_xt) for each (x,t) in the fitting group
     % see paper for details
     % negative log-likelihood without bias and offset added for debugging
-    function [dnll,nll] = dnloglike()
+    function dnll = dnloglike()
         dnll = 0;
-        nll = 0;
+        % nll = 0;
         for i = 1:length(idx_fitting)
             idx = idx_fitting(i);
             % statistics of where the current fitting point should be
@@ -86,12 +86,10 @@ function pdf = brownianb(d, step, tol, max_it)
 
     % Optimal sigma_m is found by minimizing negative-log-likelihood
     % Using a simple and naive steepest descend
-    % we do not know if the function is convex or not!
     dnll = Inf;
     it = 0;
     while (abs(dnll) > tol && it < max_it)
-        [dnll,~] = dnloglike();
-        % disp([nll, dnll, sigma_m]);
+        dnll = dnloglike();
         sigma_m = max(sigma_m - step * dnll, eps);
         it = it + 1;
     end
