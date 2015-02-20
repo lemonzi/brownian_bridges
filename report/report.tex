@@ -103,6 +103,10 @@ As we will show later, this can be computed through gradient descent-based minim
 
 Apart from Movement Ecology (BBMM), Brownian Bridges are best known for their application in Computational Finance. Instead of computing pdf's, as we have done here, they are used for generating simulated, realistic paths between two points efficiently. This allows methods similar to Monte Carlo simulation.
 
+The idea is the following: given a metric (such as the value of an asset) at a time near present and its known value in a future, estimate the range of values it will take until that time is reached. This may seem odd because the future is generally unknown, but there are some products in finance such as "Bonos del Estado" where after a fixed amount of time the product is sold for a pre-fixed amount of money.
+
+Brownian Bridges allow computing the intermediate value of the asset and, therefore, whether or not it's worth it selling it before the pre-agreeded trade, or how much total value we have in a given time instant.
+
 % \begin{verbatim}
 %     - finance
 % \end{verbatim}
